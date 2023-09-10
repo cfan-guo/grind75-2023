@@ -129,3 +129,49 @@ def coin_change_helper(coins, amount, memo)
 
   combos.empty? ? -1 : combos.min
 end
+
+# Okay so turns out if we use an array that's amount + 1 length
+# (literally just so it's easier without dealing with -1 for indices)
+# it will literally be faster and use maybe slightly less space.
+# 72.73% and 89.77% time and space. I was surprised bc I never really
+# considered speed of access of a hashtable vs. an array for when you
+# know the index of the array to look at, but at least for space I
+# figured there would be a boost bc a hash would store a key + value
+# whereas an array, the key would just be the index in the array.
+#
+# Also this thought came to me while I was passenger princess on the
+# way to pick up something from FB marketplace so hopefully I can
+# remember it next time I can pick between an array and hash (unique
+# number keys starting from zero to a set number)
+#
+# @param {Integer[]} coins
+# @param {Integer} amount
+# @return {Integer}
+def coin_change_4(coins, amount)
+  # easy outs - zero amount or single coin
+  return amount if amount.zero?
+  return ((amount % coins.first).zero? ? amount / coins.first : -1) if coins.one?
+
+  memoized = Array.new(amount + 1)
+  memoized[0] = 0
+
+  (1..amount).each do |i|
+    combos = []
+    coins.each do |c|
+      if c > i
+        next
+      elsif c == i
+        memoized[i] = 1
+        break
+      else
+        difference = i - c
+
+        combos << memoized[difference] + 1 if memoized[difference]
+      end
+    end
+
+    memoized[i] = combos.min unless combos.empty? || memoized[i]
+  end
+
+  memoized[amount] || -1
+end
