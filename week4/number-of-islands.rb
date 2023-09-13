@@ -31,23 +31,23 @@ def num_islands(grid)
 
   grid.each_with_index do |row, i|
     row.each_with_index do |cell, j|
-      land << stringify(i, j) if cell == "1"
+      land << [i.to_i, j.to_i] if cell == "1"
     end
   end
 
   return islands if land.empty?
 
   while !land.empty?
-    i, j = coordinatify(land.first)
-    to_visit = [[i, j]]
-    land.delete(land.first)
+    cell = land.first
+    to_visit = [cell]
+    land.delete(cell)
 
     while !to_visit.empty?
       i, j = to_visit.shift
-      explore([i + 1, j], land, to_visit, grid) if i + 1 < rows
-      explore([i - 1, j], land, to_visit, grid) if i > 0
-      explore([i, j + 1], land, to_visit, grid) if j + 1 < cols
-      explore([i, j - 1], land, to_visit, grid) if j > 0
+      explore(i + 1, j, land, to_visit, grid) if i + 1 < rows
+      explore(i - 1, j, land, to_visit, grid) if i > 0
+      explore(i, j + 1, land, to_visit, grid) if j + 1 < cols
+      explore(i, j - 1, land, to_visit, grid) if j > 0
     end
 
     islands += 1
@@ -56,20 +56,7 @@ def num_islands(grid)
   islands
 end
 
-def explore(cell, land, to_visit, grid)
-  i, j = cell
-
-  if grid[i][j] == "1" && land === stringify(i, j)
-    to_visit << cell
-  end
-
-  land.delete(stringify(i, j))
-end
-
-def stringify(i, j)
-  i.to_s + "," + j.to_s
-end
-
-def coordinatify(s)
-  s.split(",").map {|x| x.to_i}
+def explore(r, c, land, to_visit, grid)
+  to_visit << [r, c] if grid[r][c] == "1" && land === [r, c]
+  land.delete([r, c])
 end
