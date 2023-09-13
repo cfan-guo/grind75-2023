@@ -60,3 +60,45 @@ def explore(r, c, land, to_visit, grid)
   to_visit << [r, c] if grid[r][c] == "1" && land === [r, c]
   land.delete([r, c])
 end
+
+# another way to do this is to just... loop thru once and every time
+# we (🎵 touch 🎵) see land, we BFS and transform all the land to nil
+# or something else, and then just skip on by otherwise.
+#
+# @param {Character[][]} grid
+# @return {Integer}
+def num_islands_2(grid)
+  rows = grid.length
+  cols = grid.first.length
+
+  island = 0
+
+  grid.each_with_index do |row, i|
+    row.each_with_index do |cell, j|
+      next if cell.nil?
+      next unless cell == "1"
+
+      island += 1
+      visit_island(i, j, grid)
+    end
+  end
+
+  island
+end
+
+def visit_island(i, j, grid)
+  return if outta_bounds(i, j, grid)
+  return unless grid[i][j] == "1"
+
+  grid[i][j] = nil
+
+  visit_island(i + 1, j, grid)
+  visit_island(i - 1, j, grid)
+  visit_island(i, j + 1, grid)
+  visit_island(i, j - 1, grid)
+end
+
+def outta_bounds(i, j, grid)
+  return true if i < 0 || j < 0
+  i >= grid.length || j >= grid.first.length
+end
