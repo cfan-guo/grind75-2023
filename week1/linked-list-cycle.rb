@@ -37,3 +37,18 @@ def hasCycle(head)
 
   false
 end
+
+# this can also be done using recursion if ya want
+def hasCycleRecursive(head)
+  return false if head.nil?
+  p, p2 = head, head
+
+  keep_on_trucking(p, p2.next)
+end
+
+def keep_on_trucking(p, p2)
+  return false if p2.nil? || p2.next.nil?
+  return true if p == p2
+
+  keep_on_trucking(p.next, p2.next.next)
+end
